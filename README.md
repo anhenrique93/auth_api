@@ -4,7 +4,7 @@ Este é um microserviço de autenticação desenvolvido em .NET 6, reunindo toda
 
 Na implementação, optei por utilizar o PostgreSQL, com todas as consultas e stored procedures documentadas no ficheiro database.sql.
 
-Contudo, para quem preferir utilizar uma base de dados diferente, basta criar um repositório para essa base com seguindo o contrato presente na interface IRepository e IUserRepository disponibilizadas.
+Contudo, para quem preferir utilizar uma base de dados diferente, basta criar um novo repositorio seguindo o contrato presente na interface IRepository e IUserRepository disponibilizadas.
 
 # Authentication Miccroservice Description
 This is an authentication microservice developed in .NET 6, encompassing all essential authentication functionalities. It includes methods such as registration, login, logout, delete, update, and password change. Additionally, it offers JWT authentication with refresh token and integrates with Swagger for streamlined testing.
