@@ -2,6 +2,14 @@
   "dependencies": {
     "apis1": {
       "type": "apis"
+    },
+    "apis2": {
+      "type": "apis"
+    },
+    "secrets1": {
+      "type": "secrets",
+      "connectionId": "jwtKey",
+      "dynamicId": null
     }
   }
 }

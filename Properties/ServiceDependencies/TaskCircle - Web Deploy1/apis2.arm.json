@@ -97,11 +97,11 @@
               "type": "Microsoft.ApiManagement/service/apis",
               "name": "AuthentcationApi/AuthentcationApi",
               "properties": {
-                "displayName": "AuthentcationApi",
+                "displayName": "AuthApi",
                 "apiRevision": "1",
-                "description": null,
+                "description": "Authentication Api With OpenAPI documentation",
                 "subscriptionRequired": true,
-                "serviceUrl": null,
+                "serviceUrl": "https://authentcationapi.azurewebsites.net",
                 "path": "",
                 "protocols": [
                   "https"

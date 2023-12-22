@@ -1,6 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -58,25 +56,6 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-//Key vault config
-string jwtKey;
-
-if (builder.Environment.IsProduction())
-{
-    var keyVaultUrl = builder.Configuration["AzureKeyVault:VaultUrl"];
-    var secretName = builder.Configuration["AzureKeyVault:SecretName"];
-
-    var credential = new DefaultAzureCredential();
-    var secretClient = new SecretClient(new Uri(keyVaultUrl), credential);
-    KeyVaultSecret secret = await secretClient.GetSecretAsync(secretName);
-
-    jwtKey = secret.Value;
-}
-else
-{
-    jwtKey = builder.Configuration["Jwt:Key"];
-}
-
 //Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -91,7 +70,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration.GetSection("Jwt:Issuer").Value,
             ValidAudience = builder.Configuration.GetSection("Jwt:Audience").Value,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(jwtKey))
+                .GetBytes(builder.Configuration.GetSection("Jwt:Key").Value))
         };
     });
 
@@ -109,6 +88,13 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthApi v1");
+    });
+} else
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>
