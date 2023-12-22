@@ -1,3 +1,5 @@
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,18 +17,65 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "AuthApi",
+        Version = "v1",
+        Description = "Authentication Api With OpenAPI documentation",
+        Contact = new OpenApiContact
+        {
+            Name = "Henrique Araújo Neto 2023/24",
+            Email = "anhenrique93@gmail.com",
+            Url = new Uri("http://anhenrique.netlify.app/")
+        },
+    });
+
+    var filePath = System.IO.Path.Combine(System.AppContext.BaseDirectory, "AuthentcationApi.xml");
+    options.IncludeXmlComments(filePath);
+
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
         Description = "Standard Authorization header using the Bearer Scheme (\"bearer  {token}\")",
         In = ParameterLocation.Header,
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.ApiKey,
     });
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+
+//Key vault config
+string jwtKey;
+
+if (builder.Environment.IsProduction())
+{
+    var keyVaultUrl = builder.Configuration["AzureKeyVault:VaultUrl"];
+    var secretName = builder.Configuration["AzureKeyVault:SecretName"];
+
+    var credential = new DefaultAzureCredential();
+    var secretClient = new SecretClient(new Uri(keyVaultUrl), credential);
+    KeyVaultSecret secret = await secretClient.GetSecretAsync(secretName);
+
+    jwtKey = secret.Value;
+}
+else
+{
+    jwtKey = builder.Configuration["Jwt:Key"];
+}
 
 //Auth
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -34,15 +83,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
             ValidIssuer = builder.Configuration.GetSection("Jwt:Issuer").Value,
             ValidAudience = builder.Configuration.GetSection("Jwt:Audience").Value,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("Jwt:Key").Value))
+                .GetBytes(jwtKey))
         };
     });
 
@@ -62,8 +111,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthApi v1");
+    });
 }
+
+// Configuração CORS - deve vir após app.UseEndpoints
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

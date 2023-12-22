@@ -6,6 +6,7 @@
 # Otheres files
 /database_settings.txt
 /diagrams
+/appsettings.Production.json
 
 # dotenv files
 .env

@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaskCircle.AuthentcationApi</name>
+    </assembly>
+    <members>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Register(TaskCircle.AuthentcationApi.DTOs.UserDTO)">
+            <summary>
+            Register a User
+            </summary>
+            <param name="email" example="example@email.com">The User email</param>
+            <param name="password" example="password123!">The User password</param>
+            <response code="200">Registered User</response>
+            <response code="400">The password or email does not meet the requirements.</response>
+            <response code="500">An account with this email already exists.</response>
+            <returns>User</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Login(TaskCircle.AuthentcationApi.DTOs.UserDTO)">
+            <summary>
+            Log in with email and password.
+            </summary>
+            <param name="email" example="example@email.com">The User email</param>
+            <param name="password" example="password123!">The User password</param>
+            <response code="200">User Loged In</response>
+            <response code="400">UUser does not exist or credentials are incorrect.</response>
+            <returns>User Token</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Logout">
+            <summary>
+            "Log out current user.
+            </summary>
+            <response code="200">Logout successful</response>
+            <response code="401">Token not provided (User not logged in?)</response>
+            <returns>Ok("Successful")</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.refreshToken">
+            <summary>
+            Update refresh token for the logged-in user.
+            </summary>
+            <response code="200">Refresh token Updated</response>
+            <response code="401">The current refresh token does not belong to the logged-in user.</response>
+            <returns>New Refresh token</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.WhoAmI">
+            <summary>
+            Retrieve information about the logged-in user
+            </summary>
+            <response code="200">Atual Logged-in user information</response>
+            <response code="401">Unauthorized, No user logged in.</response>
+            <returns>User</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Put(TaskCircle.AuthentcationApi.DTOs.UpdateUserDTO)">
+            <summary>
+            Update logged-in user
+            </summary>
+            <param name="User">Fields of the user you wish to change.</param>
+            <response code="200">Fields updated successfully.</response>
+            <response code="400">The password or email does not meet the requirements.</response>
+            <response code="500">An account with this email already exists.</response>
+            <returns>User</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.ChangePassword(TaskCircle.AuthentcationApi.DTOs.ChangePasswordDTO)">
+            <summary>
+            Change logged-in user password
+            </summary>
+            <param name="current passwordpassword">Current user password </param>
+            <param name="new passwordpassword">New user password </param>
+            <response code="200">Password updated successfully.</response>
+            <response code="400">The new password does not meet the requirements</response>
+            <response code="400">The current password is wrong</response>
+            <response code="400">The new password cannot be the same as the current password.</response>
+            <response code="500">An account with this email already exists.</response>
+            <returns>User</returns>
+        </member>
+        <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Delete">
+            <summary>
+            Delete logged-in user
+            </summary>
+            <response code="200">Password updated successfully.</response>
+            <response code="401">Unauthorized, No user logged in.</response>
+            <returns></returns>
+        </member>
+        <member name="T:TaskCircle.AuthentcationApi.Models.User">
+            <summary>
+            This class represents a user in the application, including its fields in the User table.
+            </summary>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.IdUser">
+            <summary>
+            User Id
+            </summary>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.Email">
+            <summary>
+            User Email
+            </summary>
+            <example>nome@exemple.com</example>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.PasswordHash">
+            <summary>
+            User Password with hash
+            </summary>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.PasswordSalt">
+            <summary>
+            Password hash salt
+            </summary>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.RefreshToken">
+            <summary>
+            "Refresh token to extend token expiration.
+            </summary>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.TokenCreated">
+            <summary>
+            Creation date of the refresh token.
+            </summary>
+            <example>2023-12-21 12:17:53.040</example>
+        </member>
+        <member name="P:TaskCircle.AuthentcationApi.Models.User.TokenExpires">
+            <summary>
+            Expiration date of the refresh token.
+            </summary>
+            <example>2023-12-28 12:17:53.040</example>
+        </member>
+    </members>
+</doc>

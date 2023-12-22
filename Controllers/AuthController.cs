@@ -14,7 +14,7 @@ namespace TaskCircle.AuthentcationApi.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-
+    
     private readonly IUserService? _userService;
     private readonly IConfiguration? _configuration;
 
@@ -24,6 +24,15 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Register a User
+    /// </summary>
+    /// <param name="email" example="example@email.com">The User email</param>
+    /// <param name="password" example="password123!">The User password</param>
+    /// <response code="200">Registered User</response>
+    /// <response code="400">The password or email does not meet the requirements.</response>
+    /// <response code="500">An account with this email already exists.</response>
+    /// <returns>User</returns>
     [HttpPost("register")]
     public async Task<ActionResult<UserDTO>> Register([FromBody] UserDTO userDto)
     {
@@ -41,7 +50,15 @@ public class AuthController : ControllerBase
         return Ok(userDto);
     }
 
-    [HttpPost("Login")]
+    /// <summary>
+    /// Log in with email and password.
+    /// </summary>
+    /// <param name="email" example="example@email.com">The User email</param>
+    /// <param name="password" example="password123!">The User password</param>
+    /// <response code="200">User Loged In</response>
+    /// <response code="400">UUser does not exist or credentials are incorrect.</response>
+    /// <returns>User Token</returns>
+    [HttpPost("login")]
     public async Task<ActionResult<string>> Login([FromBody] UserDTO userDto)
     {
         if (userDto is null) return BadRequest("Invalid Data");
@@ -70,6 +87,12 @@ public class AuthController : ControllerBase
         return Ok(token);
     }
 
+    /// <summary>
+    /// "Log out current user.
+    /// </summary>
+    /// <response code="200">Logout successful</response>
+    /// <response code="401">Token not provided (User not logged in?)</response>
+    /// <returns>Ok("Successful")</returns>
     [HttpPost("logout"), Authorize]
     public async Task<ActionResult> Logout()
     {
@@ -84,6 +107,12 @@ public class AuthController : ControllerBase
         return Ok("Logout successful");
     }
 
+    /// <summary>
+    /// Update refresh token for the logged-in user.
+    /// </summary>
+    /// <response code="200">Refresh token Updated</response>
+    /// <response code="401">The current refresh token does not belong to the logged-in user.</response>
+    /// <returns>New Refresh token</returns>
     [HttpPost("refresh-token"), Authorize]
     public async Task<ActionResult<string>> refreshToken()
     {
@@ -118,7 +147,13 @@ public class AuthController : ControllerBase
         return Ok(token);
     }
 
-    [HttpGet("WhoAmI"), Authorize]
+    /// <summary>
+    /// Retrieve information about the logged-in user
+    /// </summary>
+    /// <response code="200">Atual Logged-in user information</response>
+    /// <response code="401">Unauthorized, No user logged in.</response>
+    /// <returns>User</returns>
+    [HttpGet("whoami"), Authorize]
     public async Task<WhoAmIDTO> WhoAmI()
     {
         //Obter token de acesso atual do usuario
@@ -137,7 +172,15 @@ public class AuthController : ControllerBase
         return user;
     }
 
-    [HttpPut("UpdateUser"), Authorize]
+    /// <summary>
+    /// Update logged-in user
+    /// </summary>
+    /// <param name="User">Fields of the user you wish to change.</param>
+    /// <response code="200">Fields updated successfully.</response>
+    /// <response code="400">The password or email does not meet the requirements.</response>
+    /// <response code="500">An account with this email already exists.</response>
+    /// <returns>User</returns>
+    [HttpPut("update"), Authorize]
     public async Task<ActionResult> Put([FromBody] UpdateUserDTO updateUserDto)
     {
         if (updateUserDto is null) return BadRequest();
@@ -152,7 +195,18 @@ public class AuthController : ControllerBase
         return Ok(updateUserDto);
     }
 
-    [HttpPut("ChangePassword"), Authorize]
+    /// <summary>
+    /// Change logged-in user password
+    /// </summary>
+    /// <param name="current password">Current user password </param>
+    /// <param name="new password">New user password </param>
+    /// <response code="200">Password updated successfully.</response>
+    /// <response code="400">The new password does not meet the requirements</response>
+    /// <response code="400">The current password is wrong</response>
+    /// <response code="400">The new password cannot be the same as the current password.</response>
+    /// <response code="500">An account with this email already exists.</response>
+    /// <returns>User</returns>
+    [HttpPut("change-password"), Authorize]
     public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
     {
         if (changePasswordDto is null) return BadRequest();
@@ -182,7 +236,13 @@ public class AuthController : ControllerBase
 
     }
 
-    [HttpDelete("DeleteUser"), Authorize]
+    /// <summary>
+    /// Delete logged-in user
+    /// </summary>
+    /// <response code="200">Password updated successfully.</response>
+    /// <response code="401">Unauthorized, No user logged in.</response>
+    /// <returns></returns>
+    [HttpDelete("delete"), Authorize]
     public async Task<ActionResult> Delete()
     {
         // Receber usuario logado
@@ -232,7 +292,7 @@ public class AuthController : ControllerBase
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var issuer = _configuration.GetSection("Jwt:Issuer").Value;
-        var audience = _configuration.GetSection("Jwt:Issuer").Value;
+        var audience = _configuration.GetSection("Jwt:Audience").Value;
 
         var token = new JwtSecurityToken(
             claims: claims,
