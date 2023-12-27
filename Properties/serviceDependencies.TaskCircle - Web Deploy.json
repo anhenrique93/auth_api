@@ -13,14 +13,6 @@
     "secrets2": {
       "ignored": "true",
       "type": "secrets.keyVault"
-    },
-    "apis1": {
-      "ignored": "true",
-      "type": "apis"
-    },
-    "apis2": {
-      "ignored": "true",
-      "type": "apis.azure"
     }
   }
 }

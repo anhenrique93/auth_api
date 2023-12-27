@@ -32,7 +32,9 @@ public class UserRepository : IUserRepository
             }
         }
 
-        return Entity;
+        var user = await GetUserByEmail(Entity.Email);
+
+        return user;
     }
 
     public async Task<User> RefreshToken(User Entity)

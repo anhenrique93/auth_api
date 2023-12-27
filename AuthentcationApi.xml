@@ -22,7 +22,8 @@
             <param name="email" example="example@email.com">The User email</param>
             <param name="password" example="password123!">The User password</param>
             <response code="200">User Loged In</response>
-            <response code="400">UUser does not exist or credentials are incorrect.</response>
+            <response code="401">User not found</response>
+            <response code="400">User does not exist or credentials are incorrect.</response>
             <returns>User Token</returns>
         </member>
         <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Logout">
@@ -57,7 +58,7 @@
             <response code="200">Fields updated successfully.</response>
             <response code="400">The password or email does not meet the requirements.</response>
             <response code="500">An account with this email already exists.</response>
-            <returns>User</returns>
+            <returns>String</returns>
         </member>
         <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.ChangePassword(TaskCircle.AuthentcationApi.DTOs.ChangePasswordDTO)">
             <summary>
@@ -70,15 +71,15 @@
             <response code="400">The current password is wrong</response>
             <response code="400">The new password cannot be the same as the current password.</response>
             <response code="500">An account with this email already exists.</response>
-            <returns>User</returns>
+            <returns>String</returns>
         </member>
         <member name="M:TaskCircle.AuthentcationApi.Controllers.AuthController.Delete">
             <summary>
             Delete logged-in user
             </summary>
-            <response code="200">Password updated successfully.</response>
+            <response code="200">User Deleted</response>
             <response code="401">Unauthorized, No user logged in.</response>
-            <returns></returns>
+            <returns>String</returns>
         </member>
         <member name="T:TaskCircle.AuthentcationApi.Models.User">
             <summary>

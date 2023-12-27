@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,6 +13,7 @@ namespace TaskCircle.AuthentcationApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[EnableCors("Auth")]
 public class AuthController : ControllerBase
 {
     
@@ -38,6 +40,12 @@ public class AuthController : ControllerBase
     {
         if (userDto is null) return BadRequest("Invalid Data");
 
+        //Verificar se user já existe
+        var user = await _userService.GetUserByEmail(userDto.Email);
+
+        if (user != null)
+            return BadRequest("An account with this email already exists.");
+
         CreatePasswordHash(userDto.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
         userDto.PasswordHash = passwordHash;
@@ -45,9 +53,9 @@ public class AuthController : ControllerBase
 
         await _userService.Register(userDto);
 
-        userDto.Password = null;
+        var registeredUser = await _userService.GetUserByEmail(userDto.Email);
 
-        return Ok(userDto);
+        return Ok(registeredUser);
     }
 
     /// <summary>
@@ -56,7 +64,8 @@ public class AuthController : ControllerBase
     /// <param name="email" example="example@email.com">The User email</param>
     /// <param name="password" example="password123!">The User password</param>
     /// <response code="200">User Loged In</response>
-    /// <response code="400">UUser does not exist or credentials are incorrect.</response>
+    /// <response code="401">User not found</response>
+    /// <response code="400">User does not exist or credentials are incorrect.</response>
     /// <returns>User Token</returns>
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login([FromBody] UserDTO userDto)
@@ -179,7 +188,7 @@ public class AuthController : ControllerBase
     /// <response code="200">Fields updated successfully.</response>
     /// <response code="400">The password or email does not meet the requirements.</response>
     /// <response code="500">An account with this email already exists.</response>
-    /// <returns>User</returns>
+    /// <returns>String</returns>
     [HttpPut("update"), Authorize]
     public async Task<ActionResult> Put([FromBody] UpdateUserDTO updateUserDto)
     {
@@ -192,7 +201,7 @@ public class AuthController : ControllerBase
 
         await _userService.Update(updateUserDto);
 
-        return Ok(updateUserDto);
+        return Ok("Fields updated successfully");
     }
 
     /// <summary>
@@ -205,7 +214,7 @@ public class AuthController : ControllerBase
     /// <response code="400">The current password is wrong</response>
     /// <response code="400">The new password cannot be the same as the current password.</response>
     /// <response code="500">An account with this email already exists.</response>
-    /// <returns>User</returns>
+    /// <returns>String</returns>
     [HttpPut("change-password"), Authorize]
     public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
     {
@@ -232,16 +241,16 @@ public class AuthController : ControllerBase
 
         await _userService.ChangePassword(user);
 
-        return Ok(user);
+        return Ok("Password updated successfully");
 
     }
 
     /// <summary>
     /// Delete logged-in user
     /// </summary>
-    /// <response code="200">Password updated successfully.</response>
+    /// <response code="200">User Deleted</response>
     /// <response code="401">Unauthorized, No user logged in.</response>
-    /// <returns></returns>
+    /// <returns>String</returns>
     [HttpDelete("delete"), Authorize]
     public async Task<ActionResult> Delete()
     {
@@ -250,9 +259,7 @@ public class AuthController : ControllerBase
 
         await _userService.DeleteUser(loggedUser.IdUser);
 
-
-
-        return Ok(loggedUser);
+        return Ok("User Deleted");
     }
 
     private RefreshToken GenerateRefreshToken()

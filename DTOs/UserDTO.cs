@@ -7,8 +7,7 @@ namespace TaskCircle.AuthentcationApi.DTOs;
 
 public class UserDTO
 {
-    [JsonIgnore]
-    [XmlIgnore]
+
     public int IdUser { get; set; }
 
     [Required(ErrorMessage = "The email is Required")]
