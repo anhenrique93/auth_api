@@ -1,6 +1,6 @@
 # Descrição do Microserviço de Autenticação:
 
-Este é um microserviço de autenticação desenvolvido em .NET 6, reunindo todas as funcionalidades essenciais para autenticação. Inclui métodos como registo, login, logout, delete, update e troca de password. Além disso, proporciona autenticação JWT com refresh token e integração com Swagger para facilitar os testes.
+Este é um serviço de autenticação desenvolvido em .NET 6, reunindo todas as funcionalidades essenciais para autenticação. Inclui métodos como registo, login, logout, delete, update e troca de password. Além disso, proporciona autenticação JWT com refresh token e integração com Swagger para facilitar os testes.
 
 Na implementação, optei por utilizar o PostgreSQL, com todas as consultas e stored procedures documentadas no ficheiro database.sql.
 
