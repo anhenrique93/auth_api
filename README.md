@@ -7,7 +7,7 @@ Na implementação, optei por utilizar o PostgreSQL, com todas as consultas e st
 Contudo, para quem preferir utilizar uma base de dados diferente, basta criar um novo repositorio seguindo o contrato presente na interface IRepository e IUserRepository disponibilizadas.
 
 # Authentication Miccroservice Description
-This is an authentication microservice developed in .NET 6, encompassing all essential authentication functionalities. It includes methods such as registration, login, logout, delete, update, and password change. Additionally, it offers JWT authentication with refresh token and integrates with Swagger for streamlined testing.
+This is an authentication service developed in .NET 6, encompassing all essential authentication functionalities. It includes methods such as registration, login, logout, delete, update, and password change. Additionally, it offers JWT authentication with refresh token and integrates with Swagger for streamlined testing.
 
 In this implementation, PostgreSQL was chosen, with all queries and stored procedures documented in the database.sql file.
 
